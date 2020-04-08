@@ -4,6 +4,8 @@ from time import sleep
 
 from blobfish_terminal_ui_panes import Window, StringWindow, EditorWindow, MenuWindow, MenuTuple
 
+from blobfish_wikipedia_wrapper import WikipediaWrapper
+
 from itertools import cycle
 
 from random import randint
@@ -35,16 +37,20 @@ TITLE_ACTIVE = 1
 TITLE_INACTIVE = 2
 MENU_MESSAGE = 3
 
-class FakeChatWindow(StringWindow):
+class BlobfishTerminalUi(StringWindow):
     '''String Window that just spews out some words at random times'''
 
     def __init__(self,*args,**kwargs):
 
-        super(FakeChatWindow,self).__init__(*args,**kwargs)
+        super(BlobfishTerminalUi,self).__init__(*args,**kwargs)
         self.next_time = time() + randint(1,4)
         self.things_to_say = self.fake_chat_gen()
 
     def fake_chat_gen(self):
+        wikipedia_wrapper = WikipediaWrapper()
+        
+        intro = wikipedia_wrapper.GetSearchResult()
+        '''
         intro = [
           "This is a fake chat program",
           "Press TAB to switch between windows",
@@ -52,10 +58,12 @@ class FakeChatWindow(StringWindow):
           "I could be getting information from a socket rather than a dumb loop!",
           "Press CTRL+C to quit.",
           "So, uh, have fun and all."]
+        '''
 
         annoying = cycle(["this is the song that never ends","It goes on and on my FRIEND!",
                             "Some people started singing it not knowing what it was.",
                             "and then they kept on singing it for-ever just because"])
+                            
 
         for s in intro:
           yield s
@@ -68,7 +76,7 @@ class FakeChatWindow(StringWindow):
         if now > self.next_time:
           self.next_time = now+randint(1,5)
           self.add_str(self.things_to_say.next(),palette=BASIC)
-        super(FakeChatWindow,self).update()
+        super(BlobfishTerminalUi,self).update()
 
           
 def run():
@@ -81,7 +89,7 @@ def run():
     #initialize windows
     #specify Upper left corner, size, title, color scheme and border/no-border
     main_border = Window((0,0),(maxx, maxy),"Main Window",TITLE_INACTIVE)
-    display_output = FakeChatWindow((1,1),(splitx-1,splity-1),"Chat",TITLE_INACTIVE)
+    display_output = BlobfishTerminalUi((1,1),(splitx-1,splity-1),"Chat",TITLE_INACTIVE)
     menu_window = MenuWindow((splitx,1),((maxx-splitx-1),maxy-2),"Menu",TITLE_INACTIVE)
     editor_window = EditorWindow((1,splity),(splitx-1,maxy-splity-1), "Text Edit", palette=TITLE_INACTIVE,
                              callback=display_output.add_str)
