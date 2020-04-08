@@ -44,7 +44,8 @@ class WikipediaWrapper(object):
         
     def getFirstPngImageUrl(object, wikipediaPage):
         
-        wikipediaPage = wikipedia.page("Python")
+        #Debug
+        #wikipediaPage = wikipedia.page("Python")
         
         for i in range(len(wikipediaPage.images)):
         

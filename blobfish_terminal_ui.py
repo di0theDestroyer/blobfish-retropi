@@ -1,6 +1,8 @@
 import curses
 from curses import COLOR_WHITE,COLOR_GREEN,COLOR_RED, COLOR_CYAN,COLOR_BLACK, COLOR_MAGENTA
 
+import random
+
 from blobfish_terminal_ui_panes import Window, StringWindow, EditorWindow, MenuWindow, MenuTuple
 from blobfish_wikipedia_wrapper import WikipediaWrapper
 from blobfish_image_to_ascii import ImageToAscii
@@ -9,7 +11,7 @@ from blobfish_image_to_ascii import ImageToAscii
 
 from itertools import cycle
 
-from random import randint
+#from random import randint
 
 from time import time, sleep
 
@@ -44,7 +46,9 @@ class BlobfishTerminalUi(StringWindow):
     def __init__(self,*args,**kwargs):
 
         super(BlobfishTerminalUi,self).__init__(*args,**kwargs)
-        self.next_time = time() + randint(1,4)
+        #self.next_time = time() + randint(1,2)
+        self.next_time = time() + random.uniform(0, 1)
+        
         self.things_to_say = self.output_window_text_gen()
         
         self.currentWikipediaPage = self.wikipedia_text_gen()
@@ -62,7 +66,7 @@ class BlobfishTerminalUi(StringWindow):
         pageTitle = wikipedia_wrapper.getRandomPageTitle()
         page = wikipedia_wrapper.getPage(pageTitle)
         pageSummary = page.summary
-        
+        pageImageUrl = wikipedia_wrapper.getFirstPngImageUrl(page)
         
         # drop all unicode characters 
         # works around "UnicodeEncodeError" from python
@@ -73,17 +77,21 @@ class BlobfishTerminalUi(StringWindow):
         wikipediaPageAttributes.append("***pageTitle*** --> " + pageTitle)
         wikipediaPageAttributes.append("***pageUrl*** --> " + page.url)
         wikipediaPageAttributes.append("***pageSummary*** --> " + pageSummary)
-        wikipediaPageAttributes.append("***firstPngImageUrl*** --> " + wikipedia_wrapper.getFirstPngImageUrl(page))
         
-        #image to Ascii!!!
-        imageToAscii = ImageToAscii("https://upload.wikimedia.org/wikipedia/commons/1/10/Python_3._The_standard_type_hierarchy.png")
-        asciiImage = imageToAscii.getImage()
-        wikipediaPageAttributes.append("***asciiImageRender*** -->")
+        # some pages don't have ANY images, so just list the text
+        if pageImageUrl is not None:
         
-        #need the actual image appended row by row to keep design
-        asciiImageRows = asciiImage.split('\n')
-        for imageRow in asciiImageRows:
-            wikipediaPageAttributes.append(imageRow)
+            wikipediaPageAttributes.append("***firstPngImageUrl*** --> " + pageImageUrl)
+            
+            #image to Ascii!!!
+            imageToAscii = ImageToAscii(pageImageUrl)
+            asciiImage = imageToAscii.getImage()
+            wikipediaPageAttributes.append("***asciiImageRender*** -->")
+            
+            #need the actual image appended row by row to keep design
+            asciiImageRows = asciiImage.split('\n')
+            for imageRow in asciiImageRows:
+                wikipediaPageAttributes.append(imageRow)
         
         for s in wikipediaPageAttributes:
             yield s
@@ -110,7 +118,10 @@ class BlobfishTerminalUi(StringWindow):
         now = time()
     
         if now > self.next_time:
-          self.next_time = now+randint(1,2)
+          
+          self.next_time = now + + random.uniform(0, 1)
+          
+          #self.next_time = now+randint(1,2)
           #self.add_str(self.things_to_say.next(),palette=BASIC)
           
           #TRY STREAMING WIKIPEDIA DATA, None is default value if iterator !hasNext
