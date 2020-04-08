@@ -44,37 +44,37 @@ class BlobfishTerminalUi(StringWindow):
 
         super(BlobfishTerminalUi,self).__init__(*args,**kwargs)
         self.next_time = time() + randint(1,4)
-        self.things_to_say = self.fake_chat_gen()
+        self.things_to_say = self.output_window_text_gen()
 
-    def fake_chat_gen(self):
+    def output_window_text_gen(self):
+    
         wikipedia_wrapper = WikipediaWrapper(500)     
         intro = wikipedia_wrapper.getSearchResult()
+        
         '''
         intro = [
-          "This is a fake chat program",
           "Press TAB to switch between windows",
           "When you type in the editor, this window is still responsive",
-          "I could be getting information from a socket rather than a dumb loop!",
-          "Press CTRL+C to quit.",
-          "So, uh, have fun and all."]
+          "I could be getting information from a socket rather than a dumb loop!"]
         '''
 
         annoying = cycle(["this is the song that never ends","It goes on and on my FRIEND!",
                             "Some people started singing it not knowing what it was.",
-                            "and then they kept on singing it for-ever just because"])
-                            
+                            "and then they kept on singing it for-ever just because..."])
 
         for s in intro:
           yield s
         for s in annoying:
           yield s
 
-
     def update(self):
+    
         now = time()
+    
         if now > self.next_time:
           self.next_time = now+randint(1,5)
           self.add_str(self.things_to_say.next(),palette=BASIC)
+        
         super(BlobfishTerminalUi,self).update()
  
 def run():
@@ -95,9 +95,9 @@ def run():
     #Set menu options with corrisponding callbacks
     menu_actions = [MenuTuple("Say 'Hi'",(display_output.add_str,"Hello from the Menu",MENU_MESSAGE)),
                     MenuTuple("Say something else",(display_output.add_str,"From the Menu, Hello!",MENU_MESSAGE)),
-                    MenuTuple("I Prefer Cyan",(curses.init_pair,TITLE_INACTIVE,COLOR_CYAN,COLOR_BLACK)),
-                    MenuTuple("I Prefer Green",(curses.init_pair,TITLE_INACTIVE,COLOR_GREEN,COLOR_BLACK)),
-                    MenuTuple("I Prefer Plain",(curses.init_pair,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
+                    MenuTuple("SKIN - Cyan",(curses.init_pair,TITLE_INACTIVE,COLOR_CYAN,COLOR_BLACK)),
+                    MenuTuple("SKIN - Green",(curses.init_pair,TITLE_INACTIVE,COLOR_GREEN,COLOR_BLACK)),
+                    MenuTuple("SKIN - Default",(curses.init_pair,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
                     MenuTuple("QUIT",(display_output.quit,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
                     ]
     menu_window.set_menu(menu_actions)
@@ -166,6 +166,7 @@ finally:
   
   curses.nocbreak(); stdscr.keypad(0); curses.echo();curses.endwin()
   
+  #exit message
   print("")
   print(" ---------------------------")
   print("|                           |")
@@ -174,6 +175,7 @@ finally:
   print("|  #TeamBlobfish #RetroPI   |")
   print("|                           |")
   print(" ---------------------------")
+  print("")
   
   #DEBUG
   #print "\nThis terminal can%s display color\n" % ["'t",""][curses.has_colors()]
