@@ -47,9 +47,8 @@ class BlobfishTerminalUi(StringWindow):
         self.things_to_say = self.fake_chat_gen()
 
     def fake_chat_gen(self):
-        wikipedia_wrapper = WikipediaWrapper()
-        
-        intro = wikipedia_wrapper.GetSearchResult()
+        wikipedia_wrapper = WikipediaWrapper(500)     
+        intro = wikipedia_wrapper.getSearchResult()
         '''
         intro = [
           "This is a fake chat program",

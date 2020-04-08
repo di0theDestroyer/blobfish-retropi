@@ -11,7 +11,10 @@ class WikipediaWrapper(object):
         self.publicField = fieldVal;
         
     def getSearchResult(object):
-        print(wikipedia.search("Bill"))
+        # TODO: Convert all unicode to ASCII? as in:
+        #            x.encode('UTF8') for x in searchResult]
+        searchResult = wikipedia.search("Bill")
+        return searchResult
                 
 def main():
     some_value = WikipediaWrapper(500)
