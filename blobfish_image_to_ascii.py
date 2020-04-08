@@ -63,14 +63,21 @@ class ImageToAscii(object):
         new_pixels_count = len(new_pixels)
         ascii_image = [new_pixels[index:index + new_width] for index in range(0, new_pixels_count, new_width)]
         ascii_image = "\n".join(ascii_image)
-        print(ascii_image)
-                
+        
+        #DEBUG
+        #print(ascii_image)
+        
+        return ascii_image
+
+#DEBUG         
 def main():
-    some_value = ImageToAscii("https://upload.wikimedia.org/wikipedia/en/4/4a/Commons-logo.svg")
+    some_value = ImageToAscii("https://upload.wikimedia.org/wikipedia/commons/1/10/Python_3._The_standard_type_hierarchy.png")
 
     print(some_value.imageUrl)
 
-    some_value.getImage()
+    asciiImage = some_value.getImage()
+    
+    print(asciiImage)
     
 # python2 support (not really tested in python2, so probably nothing works)
 if __name__ == "__main__":

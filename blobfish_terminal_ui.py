@@ -3,8 +3,9 @@ from curses import COLOR_WHITE,COLOR_GREEN,COLOR_RED, COLOR_CYAN,COLOR_BLACK, CO
 
 from blobfish_terminal_ui_panes import Window, StringWindow, EditorWindow, MenuWindow, MenuTuple
 from blobfish_wikipedia_wrapper import WikipediaWrapper
+from blobfish_image_to_ascii import ImageToAscii
 #from blobfish_gnuplot_wrapper import GnuPlotWrapper
-#from blobfish_img2txt_wrapper import Img2TextWrapper
+
 
 from itertools import cycle
 
@@ -73,6 +74,16 @@ class BlobfishTerminalUi(StringWindow):
         wikipediaPageAttributes.append("***pageUrl*** --> " + page.url)
         wikipediaPageAttributes.append("***pageSummary*** --> " + pageSummary)
         wikipediaPageAttributes.append("***firstPngImageUrl*** --> " + wikipedia_wrapper.getFirstPngImageUrl(page))
+        
+        #image to Ascii!!!
+        imageToAscii = ImageToAscii("https://upload.wikimedia.org/wikipedia/commons/1/10/Python_3._The_standard_type_hierarchy.png")
+        asciiImage = imageToAscii.getImage()
+        wikipediaPageAttributes.append("***asciiImageRender*** -->")
+        
+        #need the actual image appended row by row to keep design
+        asciiImageRows = asciiImage.split('\n')
+        for imageRow in asciiImageRows:
+            wikipediaPageAttributes.append(imageRow)
         
         for s in wikipediaPageAttributes:
             yield s
