@@ -73,6 +73,9 @@ class Window(object):
         for i in xrange(height):
           win.addstr(i,0,' '*(width-2))
         self.dirty = True
+        
+    def quit(self,x,y,string):
+        raise SystemExit
 
 
 class StringWindow(Window):

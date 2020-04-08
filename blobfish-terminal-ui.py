@@ -76,8 +76,7 @@ class BlobfishTerminalUi(StringWindow):
           self.next_time = now+randint(1,5)
           self.add_str(self.things_to_say.next(),palette=BASIC)
         super(BlobfishTerminalUi,self).update()
-
-          
+ 
 def run():
 
     #Manual tiling
@@ -99,6 +98,7 @@ def run():
                     MenuTuple("I Prefer Cyan",(curses.init_pair,TITLE_INACTIVE,COLOR_CYAN,COLOR_BLACK)),
                     MenuTuple("I Prefer Green",(curses.init_pair,TITLE_INACTIVE,COLOR_GREEN,COLOR_BLACK)),
                     MenuTuple("I Prefer Plain",(curses.init_pair,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
+                    MenuTuple("QUIT",(display_output.quit,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
                     ]
     menu_window.set_menu(menu_actions)
 
@@ -111,11 +111,12 @@ def run():
     active_window = input_windows.next()
     active_window.draw_border(TITLE_ACTIVE)
 
-
-    #Main Program loop.  CTRL+C to break it.
+    #Main Program loop.
     while True:
+      
       #asynchronously try to get the key the user pressed
       key = stdscr.getch()
+      
       if key == curses.ERR:
           #no key was pressed.  Do house-keeping
           dirtied = 0
@@ -130,7 +131,6 @@ def run():
           active_window.draw_border() #uses window default
           active_window = input_windows.next()
           active_window.draw_border(TITLE_ACTIVE)
-          
       else:
         #every other key gets processed by the active input window
         active_window.process_key(key)
@@ -138,6 +138,7 @@ def run():
 #Set up screen.  Try/except to make sure the terminal gets put back
 #  together no matter what happens
 try:
+  
   #https://docs.python.org/2/howto/curses.html
   stdscr = curses.initscr()
   curses.start_color()
@@ -155,10 +156,24 @@ try:
   run()
 
 except Exception:
+  
   #put the terminal back in it's normal mode before raising the error
   curses.nocbreak(); stdscr.keypad(0); curses.echo();curses.endwin()
+  
   raise
 
 finally:
+  
   curses.nocbreak(); stdscr.keypad(0); curses.echo();curses.endwin()
-  print "\nThis terminal can%s display color\n" % ["'t",""][curses.has_colors()]
+  
+  print("")
+  print(" ---------------------------")
+  print("|                           |")
+  print("|    Just Blob with it.     |")
+  print("|                           |")
+  print("|  #TeamBlobfish #RetroPI   |")
+  print("|                           |")
+  print(" ---------------------------")
+  
+  #DEBUG
+  #print "\nThis terminal can%s display color\n" % ["'t",""][curses.has_colors()]
