@@ -3,6 +3,7 @@ from curses import COLOR_GREEN,COLOR_RED, COLOR_CYAN,COLOR_BLACK
 from curses import KEY_UP, KEY_DOWN
 from curses import A_REVERSE
 from curses import textpad
+
 from collections import OrderedDict, namedtuple
 
 
@@ -74,6 +75,8 @@ class Window(object):
           win.addstr(i,0,' '*(width-2))
         self.dirty = True
         
+    #TODO: python complains on exit if only 'self' argument provided, 
+    #  so, workaround by passing unnecessary params WEEEE
     def quit(self,x,y,string):
         raise SystemExit
 
@@ -89,12 +92,14 @@ class StringWindow(Window):
     def add_str(self,string,palette=None,effect=None):
         '''Add a string with optional color and effect to the list
         to be rendered'''
+        
         #I'd rather mangle strings only on render
         #rather than store mangled data (less useful)
         self._strings.append((string,(palette,effect)))
         self.dirty = True
 
     def render_strings(self):
+    
         width, height = self._size
         width -= 2  #for border
         height -= 2
@@ -109,6 +114,7 @@ class StringWindow(Window):
             frame.append((piece.ljust(width),color))
             old += width
             piece = string[old:old+width]        
+        
         for i,(string,color) in enumerate(frame[-height:]):
           palette,effect = color
           try:
@@ -119,6 +125,7 @@ class StringWindow(Window):
             pass
 
     def update(self):
+    
         if self.dirty:
           self.render_strings()
           self._win.noutrefresh()
@@ -131,6 +138,7 @@ class EditorWindow(Window):
     smaller than given size to leave room for the border.'''
 
     def __init__(self,*args,**kwargs):
+    
         '''Takes same args and kwargs as Window, plus a callback.
         The callback is a function that gets called with the string 
         in the editor window as it's only argument.
@@ -145,16 +153,19 @@ class EditorWindow(Window):
         self.callback = callback or (lambda x: x)
 
     def init_editor(self):
+    
         self.input_window = Window([x+1 for x in self._pos],[x-2 for x in self._size],
                                    title=None,border=False)
         self.input_window._win.keypad(1)
         self.editor = textpad.Textbox(self.input_window._win)
 
     def update(self):
+    
         super(EditorWindow,self).update()
         self.input_window.update()
 
     def process_key(self,key):
+    
         if key == KEY_ENTER:
           string = self.editor.gather()
           string = ''.join(x for x in string if x != "\n")
@@ -170,6 +181,7 @@ class MenuWindow(StringWindow):
     executes callbacks when lines are selected.'''
 
     def __init__(self,*args,**kwargs):
+    
         '''Takes same args and kwargs as String Window.
         Be sure to use set_menu or this window won't do
         anything'''
@@ -179,10 +191,12 @@ class MenuWindow(StringWindow):
         self.cursor = 0
 
     def rebuild_menu(self):
+    
         self._strings = [(s.title,(None,None)) for s in self.menu_list]
         self.dirty=True
 
     def set_menu(self,new_menu):
+    
         '''takes a list of MenuTuples and creates the menu from them
         MenuTuple.title is the name that displays on the menu
         MenuTuple.callback is a tuple of (callback_func, arg_1, ..., arg_n)
@@ -192,6 +206,7 @@ class MenuWindow(StringWindow):
         self.rebuild_menu()
     
     def move_cursor(self,delta):
+    
         strings = self._strings
         old_i = self.cursor
         new_i = old_i + delta
@@ -205,6 +220,7 @@ class MenuWindow(StringWindow):
         self.dirty=True
 
     def process_key(self,key):
+    
         if key == KEY_UP:
           self.move_cursor(-1)
         elif key == KEY_DOWN:

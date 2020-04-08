@@ -11,10 +11,23 @@ class WikipediaWrapper(object):
         self.publicField = fieldVal;
         
     def getSearchResult(object):
-        # TODO: Convert all unicode to ASCII? as in:
-        #            x.encode('UTF8') for x in searchResult]
+        # TODO: Convert all unicode to ASCII strings? as in:
+        #            [x.encode('UTF8') for x in searchResult]
+        
         searchResult = wikipedia.search("Bill")
+        
         return searchResult
+        
+    def getFirstImageUrl(object):
+        
+        pageResult = wikipedia.page("Python")
+        
+        for i in range(len(pageResult.images)):
+        
+            if ".png" in pageResult.images[i]:
+                return pageResult.images[i]
+
+        #return null
                 
 def main():
     some_value = WikipediaWrapper(500)

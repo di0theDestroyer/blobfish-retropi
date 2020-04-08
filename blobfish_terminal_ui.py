@@ -1,19 +1,20 @@
 import curses
 from curses import COLOR_WHITE,COLOR_GREEN,COLOR_RED, COLOR_CYAN,COLOR_BLACK, COLOR_MAGENTA
-from time import sleep
 
 from blobfish_terminal_ui_panes import Window, StringWindow, EditorWindow, MenuWindow, MenuTuple
-
 from blobfish_wikipedia_wrapper import WikipediaWrapper
+#from blobfish_gnuplot_wrapper import GnuPlotWrapper
+#from blobfish_img2txt_wrapper import Img2TextWrapper
 
 from itertools import cycle
 
 from random import randint
+
 from time import time, sleep
 
 
 
-# most of the bootstrapper jacked from https://github.com/Permafacture/terminal_windows
+# most of the curses bootstrapper jacked from https://github.com/Permafacture/terminal_windows
 # Note -- only tested with python 2.7
 # To Install:
 #       NOTE: ONLY TESTED IN Powershell v5.1.18362.628 / Windows 10 / Python 2.7
@@ -28,7 +29,6 @@ from time import time, sleep
 
 #can't rely on curses to find tab, enter, etc.
 KEY_TAB = 9
-
 
 #name some colors (foreground/background pairs)
 #actually defined later through curses.init_pair
@@ -49,7 +49,12 @@ class BlobfishTerminalUi(StringWindow):
     def output_window_text_gen(self):
     
         wikipedia_wrapper = WikipediaWrapper(500)     
-        intro = wikipedia_wrapper.getSearchResult()
+        #intro = wikipedia_wrapper.getSearchResult() #works
+        
+        intro = ["Press TAB to switch between windows"]
+
+        #get images
+        intro.append(wikipedia_wrapper.getFirstImageUrl())
         
         '''
         intro = [
