@@ -146,7 +146,7 @@ def run():
 
     #initialize windows
     #specify Upper left corner, size, title, color scheme and border/no-border
-    main_border = Window((0,0),(maxx, maxy),"Main Window",TITLE_INACTIVE)
+    main_border = Window((0,0),(maxx, maxy),"BBS Scraper 1.0 (TM) | MS-DOS 3.2 | CONNECTED | USRobotics USR-310 on Com3 @ 2400bps",TITLE_INACTIVE)
     display_output = BlobfishTerminalUi((1,1),(splitx-1,splity-1),"Main Output Pane",TITLE_INACTIVE)
     menu_window = MenuWindow((splitx,1),((maxx-splitx-1),maxy-2),"Menu Pane",TITLE_INACTIVE)
     editor_window = EditorWindow((1,splity),(splitx-1,maxy-splity-1), "Command Pane", palette=TITLE_INACTIVE,
