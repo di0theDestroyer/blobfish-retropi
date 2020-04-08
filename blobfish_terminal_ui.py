@@ -45,37 +45,44 @@ class BlobfishTerminalUi(StringWindow):
         super(BlobfishTerminalUi,self).__init__(*args,**kwargs)
         self.next_time = time() + randint(1,4)
         self.things_to_say = self.output_window_text_gen()
+        
+        self.currentWikipediaPage = self.wikipedia_text_gen()
 
-    def output_window_text_gen(self):
+    def wikipedia_text_gen(self):
     
         wikipedia_wrapper = WikipediaWrapper(500)     
         #intro = wikipedia_wrapper.getSearchResult() #works
         
-        intro = ["Press TAB to switch between windows"]
+        wikipediaPageAttributes = [""]
 
         #get images
         
         # get random wikipedia page
         pageTitle = wikipedia_wrapper.getRandomPageTitle()
-        wikipediaPage = wikipedia_wrapper.getPage(pageTitle)
+        page = wikipedia_wrapper.getPage(pageTitle)
+        pageSummary = page.summary
+        
         
         # drop all unicode characters 
         # works around "UnicodeEncodeError" from python
-        pageSummary = wikipediaPage.summary.encode('ascii', 'ignore').decode('ascii')
-        intro.append("***pageSummary*** --> " + pageSummary)
-        #intro.append(wikipediaPage.)
+        pageTitle = pageTitle.encode('ascii', 'ignore').decode('ascii')
+        pageSummary = pageSummary.encode('ascii', 'ignore').decode('ascii')
         
-        # output the attributes we care about
-        #intro.append(wikipediaPage.title)
-        #intro.append(wikipediaPage.summary)
-        intro.append("***firstPngImageUrl*** --> " + wikipedia_wrapper.getFirstPngImageUrl(wikipediaPage))
         
-        '''
+        wikipediaPageAttributes.append("***pageTitle*** --> " + pageTitle)
+        wikipediaPageAttributes.append("***pageUrl*** --> " + page.url)
+        wikipediaPageAttributes.append("***pageSummary*** --> " + pageSummary)
+        wikipediaPageAttributes.append("***firstPngImageUrl*** --> " + wikipedia_wrapper.getFirstPngImageUrl(page))
+        
+        for s in wikipediaPageAttributes:
+            yield s
+
+    def output_window_text_gen(self):
+    
         intro = [
-          "Press TAB to switch between windows",
-          "When you type in the editor, this window is still responsive",
-          "I could be getting information from a socket rather than a dumb loop!"]
-        '''
+            "Press TAB to switch between windows", 
+            "something else"
+        ]
 
         annoying = cycle(["this is the song that never ends","It goes on and on my FRIEND!",
                             "Some people started singing it not knowing what it was.",
@@ -83,6 +90,7 @@ class BlobfishTerminalUi(StringWindow):
 
         for s in intro:
           yield s
+          
         for s in annoying:
           yield s
 
@@ -91,8 +99,19 @@ class BlobfishTerminalUi(StringWindow):
         now = time()
     
         if now > self.next_time:
-          self.next_time = now+randint(1,5)
-          self.add_str(self.things_to_say.next(),palette=BASIC)
+          self.next_time = now+randint(1,2)
+          #self.add_str(self.things_to_say.next(),palette=BASIC)
+          
+          #TRY STREAMING WIKIPEDIA DATA, None is default value if iterator !hasNext
+          nextOutputLine = next(self.currentWikipediaPage, None)         
+          
+          #might be end of iterator
+          if nextOutputLine is None:
+            self.currentWikipediaPage = self.wikipedia_text_gen()
+            nextOutputLine = next(self.currentWikipediaPage, None)
+          
+          #WIKIPEDIA
+          self.add_str(nextOutputLine,palette=BASIC)
         
         super(BlobfishTerminalUi,self).update()
  
@@ -106,14 +125,13 @@ def run():
     #initialize windows
     #specify Upper left corner, size, title, color scheme and border/no-border
     main_border = Window((0,0),(maxx, maxy),"Main Window",TITLE_INACTIVE)
-    display_output = BlobfishTerminalUi((1,1),(splitx-1,splity-1),"Chat",TITLE_INACTIVE)
-    menu_window = MenuWindow((splitx,1),((maxx-splitx-1),maxy-2),"Menu",TITLE_INACTIVE)
-    editor_window = EditorWindow((1,splity),(splitx-1,maxy-splity-1), "Text Edit", palette=TITLE_INACTIVE,
+    display_output = BlobfishTerminalUi((1,1),(splitx-1,splity-1),"Main Output Pane",TITLE_INACTIVE)
+    menu_window = MenuWindow((splitx,1),((maxx-splitx-1),maxy-2),"Menu Pane",TITLE_INACTIVE)
+    editor_window = EditorWindow((1,splity),(splitx-1,maxy-splity-1), "Command Pane", palette=TITLE_INACTIVE,
                              callback=display_output.add_str)
 
     #Set menu options with corrisponding callbacks
-    menu_actions = [MenuTuple("Say 'Hi'",(display_output.add_str,"Hello from the Menu",MENU_MESSAGE)),
-                    MenuTuple("Say something else",(display_output.add_str,"From the Menu, Hello!",MENU_MESSAGE)),
+    menu_actions = [MenuTuple("Dummy text add",(display_output.add_str,"-------THIS TEXT CAME FROM THE MENU------", MENU_MESSAGE)),
                     MenuTuple("SKIN - Cyan",(curses.init_pair,TITLE_INACTIVE,COLOR_CYAN,COLOR_BLACK)),
                     MenuTuple("SKIN - Green",(curses.init_pair,TITLE_INACTIVE,COLOR_GREEN,COLOR_BLACK)),
                     MenuTuple("SKIN - Default",(curses.init_pair,TITLE_INACTIVE,COLOR_WHITE,COLOR_BLACK)),
