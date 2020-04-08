@@ -10,7 +10,7 @@ from PIL import Image
 
 # jacked from https://dev.to/anuragrana/generating-ascii-art-from-colored-image-using-python-4ace
 # and from https://github.com/anuragrana/Python-Scripts/blob/master/image_to_ascii.py
-
+# full PIL (pillow) documentation: https://pillow.readthedocs.io/en/stable/
 
 
 

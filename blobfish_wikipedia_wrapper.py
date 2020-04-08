@@ -17,15 +17,39 @@ class WikipediaWrapper(object):
         searchResult = wikipedia.search("Bill")
         
         return searchResult
+    
+    def getRandomPageTitle(object):
         
-    def getFirstImageUrl(object):
+        #pageResult = wikipedia.page("Python")
         
-        pageResult = wikipedia.page("Python")
+        wikipediaPageTitle = wikipedia.random(1)
         
-        for i in range(len(pageResult.images)):
+        return wikipediaPageTitle
+    
+    def getPage(object, pageTitle):
         
-            if ".png" in pageResult.images[i]:
-                return pageResult.images[i]
+        #pageResult = wikipedia.page("Python")
+        
+        #wikipediaPageTitle = wikipedia.random(1)
+        
+        wikipediaPage = wikipedia.page(
+                title = pageTitle, 
+                pageid = None, 
+                auto_suggest = True, 
+                redirect = True, 
+                preload = False
+            )
+        
+        return wikipediaPage
+        
+    def getFirstPngImageUrl(object, wikipediaPage):
+        
+        wikipediaPage = wikipedia.page("Python")
+        
+        for i in range(len(wikipediaPage.images)):
+        
+            if ".png" in wikipediaPage.images[i]:
+                return wikipediaPage.images[i]
 
         #return null
                 

@@ -54,7 +54,21 @@ class BlobfishTerminalUi(StringWindow):
         intro = ["Press TAB to switch between windows"]
 
         #get images
-        intro.append(wikipedia_wrapper.getFirstImageUrl())
+        
+        # get random wikipedia page
+        pageTitle = wikipedia_wrapper.getRandomPageTitle()
+        wikipediaPage = wikipedia_wrapper.getPage(pageTitle)
+        
+        # drop all unicode characters 
+        # works around "UnicodeEncodeError" from python
+        pageSummary = wikipediaPage.summary.encode('ascii', 'ignore').decode('ascii')
+        intro.append("***pageSummary*** --> " + pageSummary)
+        #intro.append(wikipediaPage.)
+        
+        # output the attributes we care about
+        #intro.append(wikipediaPage.title)
+        #intro.append(wikipediaPage.summary)
+        intro.append("***firstPngImageUrl*** --> " + wikipedia_wrapper.getFirstPngImageUrl(wikipediaPage))
         
         '''
         intro = [
